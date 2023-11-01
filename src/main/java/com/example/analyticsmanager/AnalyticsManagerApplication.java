@@ -31,10 +31,10 @@ public class AnalyticsManagerApplication {
         , SiteAggregationService siteAggregationService) {
         return args -> {
             //Load data from CSV files on startup
-//            File eventTypeCsvFile = new File("src/main/resources/interview.data/interview.y.csv");
-//            visitEventService.saveRecordsFromCSV(eventTypeCsvFile);
-//            File viewEventCsvFile = new File("src/main/resources/interview.data/interview.X.csv");
-//            viewEventService.saveRecordsFromCSV(viewEventCsvFile);
+            File eventTypeCsvFile = new File("src/main/resources/interview.data/interview.y.csv");
+            visitEventService.saveRecordsFromCSV(eventTypeCsvFile);
+            File viewEventCsvFile = new File("src/main/resources/interview.data/interview.X.csv");
+            viewEventService.saveRecordsFromCSV(viewEventCsvFile);
             log.info("Data loaded from CSV files");
             jdbcTemplate.execute("refresh materialized view concurrently public.joined_data;");
             log.info("Materialized view refreshed");

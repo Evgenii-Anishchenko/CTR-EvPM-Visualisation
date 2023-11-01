@@ -24,6 +24,20 @@ public class SiteAggregationService extends Aggregator {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
+    public List<SiteAggrEntity> getAggregation(String tag) {
+        return siteAggregationRepo.findAllByTag(tag);
+    }
+
+    @Override
+    public void calculateAndSaveAggregation() {
+        for (String tag : getClickTags()) {
+            List<SiteAggrEntity> mmDmaAggregations = aggregateSite(tag);
+            log.info("Saving {} mmDmaAggregations for tag {}", mmDmaAggregations.size(), tag);
+            siteAggregationRepo.saveAll(mmDmaAggregations);
+        }
+    }
+
     private List<SiteAggrEntity> aggregateSite(String tag) {
         String vTag = "v" + tag;
         String sql = "SELECT view_site_id, " +
@@ -38,23 +52,16 @@ public class SiteAggregationService extends Aggregator {
         log.info("Getting siteAggregations for tag {}", tag);
 
         return results.stream()
-            .map(result -> new SiteAggrEntity(
-                (String) result.get("view_site_id"),
-                new Date(),
-                (long) result.get("total_views"),
-                (BigDecimal) result.get("ctr"),
-                (BigDecimal) result.get("evpm"),
-                tag
-            ))
+            .map(result -> {
+                SiteAggrEntity entity = new SiteAggrEntity();
+                entity.setSiteId((String) result.get("view_site_id"));
+                entity.setUpdated(new Date());
+                entity.setViews((long) result.get("total_views"));
+                entity.setCtr((BigDecimal) result.get("ctr"));
+                entity.setEvpm((BigDecimal) result.get("evpm"));
+                entity.setTag(tag);
+                return entity;
+            })
             .toList();
-    }
-
-    @Override
-    public void calculateAndSaveAggregation() {
-        for (String tag : getClickTags()) {
-            List<SiteAggrEntity> mmDmaAggregations = aggregateSite(tag);
-            log.info("Saving {} mmDmaAggregations for tag {}", mmDmaAggregations.size(), tag);
-            siteAggregationRepo.saveAll(mmDmaAggregations);
-        }
     }
 }

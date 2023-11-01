@@ -20,4 +20,6 @@ public abstract class Aggregator {
     }
 
     protected abstract void calculateAndSaveAggregation();
+
+    protected abstract List<?> getAggregation(String tag);
 }

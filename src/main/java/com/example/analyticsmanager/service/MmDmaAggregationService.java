@@ -4,6 +4,7 @@ package com.example.analyticsmanager.service;
 import com.example.analyticsmanager.entity.MmDmaAggrEntity;
 import com.example.analyticsmanager.repo.MmDmaAggregationRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.mapping.IdGenerator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,14 @@ public class MmDmaAggregationService extends Aggregator {
     }
 
     @Override
+    public List<MmDmaAggrEntity> getAggregation(String tag) {
+        return mmDmaAggregationRepo.findAllByTag(tag);
+    }
+
+    @Override
     public void calculateAndSaveAggregation() {
         for (String tag : getClickTags()) {
+            log.debug("Calculating mmDmaAggregations for tag {}", tag);
             List<MmDmaAggrEntity> mmDmaAggregations = aggregateMmDma(tag);
             log.info("Saving {} mmDmaAggregations for tag {}", mmDmaAggregations.size(), tag);
             mmDmaAggregationRepo.saveAll(mmDmaAggregations);
@@ -47,14 +54,16 @@ public class MmDmaAggregationService extends Aggregator {
         log.info("Getting mmDmaAggregations for tag {}", tag);
 
         return results.stream()
-            .map(result -> new MmDmaAggrEntity(
-                (String) result.get("view_mm_dma"),
-                new Date(),
-                (long) result.get("total_views"),
-                (BigDecimal) result.get("ctr"),
-                (BigDecimal) result.get("evpm"),
-                tag
-            ))
+            .map(result -> {
+                MmDmaAggrEntity entity = new MmDmaAggrEntity();
+                entity.setMmDma((String) result.get("view_mm_dma"));
+                entity.setUpdated(new Date());
+                entity.setViews((long) result.get("total_views"));
+                entity.setCtr((BigDecimal) result.get("ctr"));
+                entity.setEvpm((BigDecimal) result.get("evpm"));
+                entity.setTag(tag);
+                return entity;
+            })
             .toList();
     }
 }
