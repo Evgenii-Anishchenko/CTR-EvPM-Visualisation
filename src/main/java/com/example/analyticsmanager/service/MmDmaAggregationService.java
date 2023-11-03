@@ -4,7 +4,8 @@ package com.example.analyticsmanager.service;
 import com.example.analyticsmanager.entity.MmDmaAggrEntity;
 import com.example.analyticsmanager.repo.MmDmaAggregationRepo;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.IdGenerator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,8 @@ public class MmDmaAggregationService extends Aggregator {
     }
 
     @Override
-    public List<MmDmaAggrEntity> getAggregation(String tag) {
-        return mmDmaAggregationRepo.findAllByTag(tag);
+    public Page<MmDmaAggrEntity> getAggregation(String tag, Pageable pageable) {
+        return mmDmaAggregationRepo.findAllByTag(tag, pageable);
     }
 
     @Override

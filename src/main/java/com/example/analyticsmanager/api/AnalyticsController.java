@@ -7,6 +7,8 @@ import com.example.analyticsmanager.service.AnalyticsService;
 import com.example.analyticsmanager.service.MmDmaAggregationService;
 import com.example.analyticsmanager.service.SiteAggregationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,16 +36,20 @@ public class AnalyticsController {
     }
 
     @GetMapping("/mm-dma-aggr")
-    public ResponseEntity<List<MmDmaAggrEntity>> getMmDmaAggr(
-        @RequestParam String tag
+    public ResponseEntity<Page<MmDmaAggrEntity>> getMmDmaAggr(
+        @RequestParam String tag,
+        Pageable pageable
     ) {
-        return ResponseEntity.ok(mmDmaAggregationService.getAggregation(tag));
+        Page<MmDmaAggrEntity> page = mmDmaAggregationService.getAggregation(tag, pageable);
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/site-aggr")
-    public ResponseEntity<List<SiteAggrEntity>> getSiteAggr(
-        @RequestParam String tag
+    public ResponseEntity<Page<SiteAggrEntity>> getSiteAggr(
+        @RequestParam String tag,
+        Pageable pageable
     ) {
-        return ResponseEntity.ok(siteAggregationService.getAggregation(tag));
+        Page<SiteAggrEntity> page = siteAggregationService.getAggregation(tag, pageable);
+        return ResponseEntity.ok(page);
     }
 }

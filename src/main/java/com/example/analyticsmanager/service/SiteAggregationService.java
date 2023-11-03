@@ -3,6 +3,8 @@ package com.example.analyticsmanager.service;
 import com.example.analyticsmanager.entity.SiteAggrEntity;
 import com.example.analyticsmanager.repo.SiteAggregationRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +27,8 @@ public class SiteAggregationService extends Aggregator {
     }
 
     @Override
-    public List<SiteAggrEntity> getAggregation(String tag) {
-        return siteAggregationRepo.findAllByTag(tag);
+    public Page<SiteAggrEntity> getAggregation(String tag, Pageable pageable) {
+        return siteAggregationRepo.findAllByTag(tag, pageable);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.example.analyticsmanager.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
@@ -21,5 +23,5 @@ public abstract class Aggregator {
 
     protected abstract void calculateAndSaveAggregation();
 
-    protected abstract List<?> getAggregation(String tag);
+    protected abstract Page<?> getAggregation(String tag, Pageable pageable);
 }
