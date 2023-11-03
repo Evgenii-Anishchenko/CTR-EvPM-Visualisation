@@ -7,15 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.io.InputStream;
 
 @Slf4j
 @Service
@@ -24,19 +25,21 @@ public class ViewEventService implements CsvReader {
 
     private final ViewEventRepo viewEventRepository;
 
+    // This method now accepts InputStream as an argument instead of File
     @Override
-    public void saveRecordsFromCSV(File file) throws IOException {
-        if (file != null) {
-            List<ViewEvent> records = readRecordsFromCSV(file);
+    public void saveRecordsFromCSV(InputStream inputStream) throws IOException {
+        if (inputStream != null) {
+            List<ViewEvent> records = readRecordsFromCSV(inputStream);
             viewEventRepository.saveAll(records);
         }
     }
 
+    // Adjusted to read from InputStream
     @Override
-    public List<ViewEvent> readRecordsFromCSV(File file) throws IOException {
-        log.info("Reading records from CSV file {}", file.getName());
+    public List<ViewEvent> readRecordsFromCSV(InputStream inputStream) throws IOException {
+        log.info("Reading records from CSV");
         List<ViewEvent> records = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
             boolean firstLine = true;
             while ((line = reader.readLine()) != null) {
@@ -64,7 +67,7 @@ public class ViewEventService implements CsvReader {
                         );
                         records.add(viewEvent);
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        log.error("Error parsing date", e);
                     }
                 }
             }

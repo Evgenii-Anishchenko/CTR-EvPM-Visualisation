@@ -13,3 +13,16 @@ spring:
     user: evgenii
     locations: classpath:db/migration
     enabled: true
+
+#  datasource:
+#    url: jdbc:postgresql://db:5432/postgres
+#    username: evgenii
+#    driver-class-name: org.postgresql.Driver
+#  #  jpa:
+#  #    hibernate:
+#  #      ddl-auto: update
+#  flyway:
+#    url: jdbc:postgresql://db:5432/postgres
+#    user: evgenii
+#    locations: classpath:db/migration
+#    enabled: true

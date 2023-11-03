@@ -10,9 +10,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.io.File;
+import java.io.InputStream;
 
 @Slf4j
 @SpringBootApplication
@@ -23,18 +25,21 @@ public class AnalyticsManagerApplication {
     }
 
     @Bean
-    public CommandLineRunner loadDataOnStartup(VisitEventService visitEventService
-        , ViewEventService viewEventService
-        , AnalyticsService analyticsService
-        , JdbcTemplate jdbcTemplate
-        , MmDmaAggregationService mmDmaAggregationService
-        , SiteAggregationService siteAggregationService) {
+    public CommandLineRunner loadDataOnStartup(VisitEventService visitEventService,
+                                               ViewEventService viewEventService,
+                                               AnalyticsService analyticsService,
+                                               JdbcTemplate jdbcTemplate,
+                                               MmDmaAggregationService mmDmaAggregationService,
+                                               SiteAggregationService siteAggregationService,
+                                               ResourceLoader resourceLoader) {
         return args -> {
             //Load data from CSV files on startup
-            File eventTypeCsvFile = new File("src/main/resources/interview.data/interview.y.csv");
-            visitEventService.saveRecordsFromCSV(eventTypeCsvFile);
-            File viewEventCsvFile = new File("src/main/resources/interview.data/interview.X.csv");
-            viewEventService.saveRecordsFromCSV(viewEventCsvFile);
+            Resource eventTypeCsvResource = resourceLoader.getResource("classpath:interview.data/interview.y.csv");
+            InputStream eventTypeInputStream = eventTypeCsvResource.getInputStream();
+            visitEventService.saveRecordsFromCSV(eventTypeInputStream);
+            Resource viewEventCsvResource = resourceLoader.getResource("classpath:interview.data/interview.X.csv");
+            InputStream viewEventInputStream = viewEventCsvResource.getInputStream();
+            viewEventService.saveRecordsFromCSV(viewEventInputStream);
             log.info("Data loaded from CSV files");
             jdbcTemplate.execute("refresh materialized view concurrently public.joined_data;");
             log.info("Materialized view refreshed");
