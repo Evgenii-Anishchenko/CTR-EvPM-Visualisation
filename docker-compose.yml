@@ -22,7 +22,7 @@ services:
       context: ./analytics-frontend  # Replace with the path to your React app
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # Expose port 3000 on the host and map to port 80 in the container
+      - "3000:80"  # Expose port 3000 on the host and map to port 80 in the container
     depends_on:
       - app
 
