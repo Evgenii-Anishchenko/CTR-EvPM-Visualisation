@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VisitEventService implements CsvReader {
 
-    private static final int BATCH_SIZE = 500;
+    private static final int BATCH_SIZE = 200;
     private final VisitEventRepo visitEventRepo;
 
     @Override
@@ -42,6 +42,7 @@ public class VisitEventService implements CsvReader {
                     }
                     if (batch.size() >= BATCH_SIZE) {
                         visitEventRepo.saveAll(batch);
+                        log.info("Saved batch of {} records", batch.size());
                         batch.clear();
                     }
                 }
@@ -50,6 +51,7 @@ public class VisitEventService implements CsvReader {
                 }
             }
         }
+        log.info("Finished saving visit events");
     }
 
     private VisitEvent parseLineToVisitEvent(String line) {

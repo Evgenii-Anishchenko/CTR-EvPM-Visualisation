@@ -43,20 +43,18 @@ public class ViewEventService implements CsvReader {
                     if (viewEvent != null) {
                         records.add(viewEvent);
                     }
-
-                    // When the batch is full, save and clear the list
                     if (records.size() >= BATCH_SIZE) {
                         viewEventRepository.saveAll(records);
+                        log.info("Saved batch of {} records", records.size());
                         records.clear();
                     }
                 }
-
-                // Save any remaining records that did not fill the last batch
                 if (!records.isEmpty()) {
                     viewEventRepository.saveAll(records);
                 }
             }
         }
+        log.info("Finished saving view events");
     }
 
     private ViewEvent parseLineToViewEvent(String line) {
