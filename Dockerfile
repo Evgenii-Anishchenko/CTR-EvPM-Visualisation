@@ -13,4 +13,4 @@ FROM ${JAVA_BASE_IMAGE}
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar analytics-manager-0.0.1-SNAPSHOT.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","analytics-manager-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-Xmx2g", "-jar", "analytics-manager-0.0.1-SNAPSHOT.jar"]
